@@ -1,4 +1,4 @@
-⭐ Two-Factor Authentication (2FA) System
+<h1>⭐ Two-Factor Authentication (2FA) System</h1>
 
 A secure authentication system built with Node.js, Express, Passport.js, Google Authenticator (TOTP), and GitHub OAuth Login.
 
