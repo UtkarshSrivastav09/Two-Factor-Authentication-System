@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background: #f3f5f9;
+            font-family: "Helvetica", sans-serif;
+            padding-top: 40px;
+        }
+
+        .dashboard-container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 6px 22px rgba(0,0,0,0.08);
+        }
+
+        .logout-btn {
+            float: right;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        /* Toggle Switch */
+        .onoffswitch {
+            position: relative;
+            width: 65px;
+            display: inline-block;
+        }
+
+        .onoffswitch-checkbox {
+            display: none;
+        }
+
+        .onoffswitch-label {
+            display: block;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid #cccccc;
+            border-radius: 40px;
+            height: 34px;
+            background: #cccccc;
+            transition: 0.3s;
+        }
+
+        .onoffswitch-label:before {
+            content: "";
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: 0.3s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .onoffswitch-checkbox:checked + .onoffswitch-label {
+            background: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .onoffswitch-checkbox:checked + .onoffswitch-label:before {
+            transform: translateX(30px);
+        }
+
+        /* 2FA Setup Box */
+        .tfa-box, .activate {
+            margin-top: 25px;
+            display: none;
+        }
+
+        .tfa-container {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tfa-title {
+            text-align: center;
+            font-size: 21px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .tfa-warning {
+            background: #fff7d6;
+            padding: 10px;
+            border-left: 4px solid #f4b400;
+            border-radius: 6px;
+            margin-bottom: 18px;
+        }
+
+        .qr-img {
+            width: 180px;
+            height: 180px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .manual-key {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .tfa-input {
+            padding: 12px;
+            width: 100%;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 17px;
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+        }
+
+        .tfa-input:focus {
+            border-color: #0066ff;
+            box-shadow: 0 0 3px rgba(0,102,255,0.4);
+            outline: none;
+        }
+
+        .tfa-btn {
+            width: 100%;
+            padding: 12px;
+            background: #0066ff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: 0.25s;
+        }
+
+        .tfa-btn:hover {
+            background: #0052cc;
+        }
+
+        .activated-msg {
+            background: #e8fbe7;
+            padding: 10px;
+            text-align: center;
+            border-left: 4px solid #44c767;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <a href="/logout" class="btn btn-danger logout-btn">Logout</a>
+
+        <h1>Hi, <%= username %></h1>
+
+        <p class="section-title">Two-Factor Authentication (2FA)</p>
+
+        <div class="tfa-switch" style="display:flex; justify-content: space-between; align-items:center;">
+            <span>Enable / Disable 2FA:</span>
+            <div class="onoffswitch">
+                <% if(isChecked){ %>
+                    <input type="checkbox" checked id="myonoffswitch" class="onoffswitch-checkbox">
+                <% } else { %>
+                    <input type="checkbox" id="myonoffswitch" class="onoffswitch-checkbox">
+                <% } %>
+                <label class="onoffswitch-label" for="myonoffswitch"></label>
+            </div>
+        </div>
+
+        <div class="tfa-box"></div>
+        <div class="activate"></div>
+
+    </div>
+
+    <!-- JS -->
+    <script src="/js/jquery-1.11.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+
+    <script>
+        const checkbox = $(".onoffswitch-checkbox");
+        const tfa_box = $(".tfa-box");
+        const activate = $(".activate");
+
+        $(function () {
+            if (checkbox.prop("checked")) {
+                promptMessage();
+            }
+        });
+
+        checkbox.change(function () {
+            if (this.checked) {
+                $.post("users/secret")
+                    .done(function (data) {
+                        if (!data.error) {
+                            if (data.activate) {
+                                promptMessage();
+                            } else {
+                                promptSetup(data);
+                            }
+                        }
+                    });
+            } else {
+                $.post("disable/tfa")
+                    .done(function (data) {
+                        if (!data.error) {
+                            tfa_box.fadeOut(200);
+                            activate.fadeOut(200);
+                        }
+                    });
+            }
+        });
+
+        function promptSetup(data) {
+            tfa_box.html(`
+                <div class="tfa-container">
+
+                    <h2 class="tfa-title">📱 Set Up Two-Factor Authentication</h2>
+
+                    <p class="tfa-warning">
+                        <b>Important:</b> Make sure your email is added. If you lose access to your authenticator app, you won't be able to log in.
+                    </p>
+
+                    <div style="text-align:center;">
+                        <img src="${data.data.secret_uri}" class="qr-img">
+                        <div class="manual-key">Manual Key: ${data.data.secret}</div>
+                    </div>
+
+                    <form action="/enable/tfa" method="POST">
+                        <input class="tfa-input" name="tfa" maxlength="6" placeholder="123456" required>
+                        <button type="submit" class="tfa-btn">Enable 2FA</button>
+                    </form>
+
+                </div>
+            `);
+
+            tfa_box.fadeIn(300);
+        }
+
+        function promptMessage() {
+            activate.html(`<div class="activated-msg">✔ 2FA is Active</div>`);
+            activate.fadeIn(200);
+        }
+    </script>
+
+</body>
+</html>
