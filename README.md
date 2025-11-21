@@ -2,7 +2,7 @@
 
 A secure authentication system built with Node.js, Express, Passport.js, Google Authenticator (TOTP), and GitHub OAuth Login.
 
-🚀 Features
+<h1>🚀 Features</h1>
 
 🔐 User Login & Registration
 
@@ -25,13 +25,8 @@ A secure authentication system built with Node.js, Express, Passport.js, Google 
 📸 Screenshots
 🔐 Login Page
 
-📱 2FA Setup
 
-🔑 Verification Page
-
-(Replace with your actual images — or ask me to design your screenshot placeholders)
-
-🛠️ Tech Stack
+<h1>🛠️ Tech Stack</h1>
 Layer	Technology
 Backend	Node.js, Express.js
 Authentication	Passport.js, Google Authenticator (TOTP), GitHub OAuth
@@ -39,7 +34,9 @@ Database	MongoDB + Mongoose
 Frontend	HTML, CSS, JS, jQuery
 Security	bcrypt, dotenv
 QR Generation	Speakeasy / qrcode package
-📦 Installation & Setup
+
+
+<h1>📦 Installation & Setup</h1>
 1️⃣ Clone this repo
 git clone https://github.com/your-username/your-repo-name.git
 cd your-repo-name
@@ -60,7 +57,7 @@ GITHUB_CALLBACK_URL=http://localhost:5000/auth/github/callback
 4️⃣ Run the server
 npm start
 
-🔑 How to Use 2FA
+<h1>🔑 How to Use 2FA</h1>
 ➤ Step 1: Enable 2FA from Settings
 
 Click Enable 2FA button.
@@ -96,7 +93,7 @@ Authorization callback URL	http://localhost:5000/auth/github/callback
 
 Copy Client ID and Client Secret → paste in .env.
 
-🧩 Folder Structure
+<h1>🧩 Folder Structure</h1>
 project/
 │── models/
 │── routes/
@@ -108,7 +105,7 @@ project/
 │── server.js
 │── package.json
 
-🛡️ Security Notes
+<h1>🛡️ Security Notes</h1>
 
 Never push .env file to GitHub (.gitignore included)
 
@@ -118,16 +115,16 @@ Rotate OAuth credentials when deploying
 
 Use HTTPS in production
 
-🤝 Contributing
+<h1>🤝 Contributing</h1>
 
 Pull requests are welcome!
 Fork the repo → Create feature branch → Commit → PR.
 
-📜 License
+<h1>📜 License</h1>
 
 This project is licensed under the MIT License.
 
-❤️ Developer
+<h1>❤️ Developer</h1>
 
 Utkarsh Srivastav
 Made with passion for secure authentication & clean UI.
